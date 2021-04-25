@@ -1,0 +1,19 @@
+
+IMAGE_NAME = ipurpl3x/nheqminer
+DANGLING := $(shell docker images -qa -f 'dangling=true')
+
+all: build clean-dangling
+
+build:
+	docker build --progress plain -t ${IMAGE_NAME}:latest .
+
+clean-dangling:
+	@echo ""
+ifdef DANGLING
+	@echo "Cleaning dangling images (not used anymore)"
+	docker stop ${IMAGE_NAME}
+	docker rmi ${DANGLING}
+endif
+
+run:
+	docker run -e MINER_OPTIONS="-b" ${IMAGE_NAME}
